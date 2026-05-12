@@ -1,6 +1,5 @@
-import { darkTheme, lightTheme } from "@/constants/colors";
 import React from "react";
-import { Pressable, StyleSheet, Text, TextInput, View, useColorScheme } from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 interface cardAddOrEditProps {
   title: string;
@@ -67,7 +66,7 @@ const styles = StyleSheet.create({
   container: {
     gap: 20,
   },
-  
+
   titleInput: {
     fontSize: 18,
     fontWeight: "700",
