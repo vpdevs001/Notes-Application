@@ -3,6 +3,7 @@ import { lightTheme as theme } from "@/constants/colors";
 import { useState } from "react";
 import {
   FlatList,
+  ImageBackground,
   Pressable,
   StatusBar,
   StyleSheet,
@@ -17,6 +18,13 @@ export interface Note {
   title: string;
   description: string;
 }
+
+const bgImages: { [key: string]: any } = {
+  morning: require("@/assets/images/morning.jpg"),
+  afternoon: require("@/assets/images/afternoon.jpg"),
+  evening: require("@/assets/images/evening.jpg"),
+  night: require("@/assets/images/night.jpg"),
+};
 
 export default function Index() {
   const [notes, setNotes] = useState<Note[]>([
@@ -39,63 +47,83 @@ export default function Index() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredNotes = notes.filter((note) =>
-    note.title.includes(searchQuery)
+    note.title.includes(searchQuery),
   );
 
-  return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: theme.backgroundColor }]}
-    >
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor={theme.backgroundColor}
-      />
-      <View style={styles.headerContainer}>
-        <Text style={[styles.headerTitle, { color: theme.textColor }]}>
-          My Notes
-        </Text>
-      </View>
-      <View style={styles.searchBarContainer}>
-        <TextInput
-          placeholder="Search notes..."
-          placeholderTextColor={theme.mutedTextColor}
-          style={[
-            styles.searchBar,
-            {
-              backgroundColor: theme.cardColor,
-              borderColor: theme.borderColor,
-              color: theme.textColor,
-            },
-          ]}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-        <Pressable
-          style={[styles.addButton, { backgroundColor: theme.buttonColor }]}
-        >
-          <Text
-            style={[styles.addButtonText, { color: theme.buttonTextColor }]}
-          >
-            + Add
-          </Text>
-        </Pressable>
-      </View>
+  const getTimeOfDay = () => {
+    const hour = new Date().getHours();
 
-      <FlatList
-        data={filteredNotes}
-        renderItem={({ item }) => (
-          <CardDisplay title={item.title} description={item.description} />
-        )}
-        keyExtractor={(item) => item.id.toString()}
-        style={styles.notesList}
-        contentContainerStyle={styles.notesListContent}
-      />
-    </SafeAreaView>
+    if (hour >= 5 && hour < 11) return "morning";
+    if (hour >= 11 && hour < 16) return "afternoon";
+    if (hour >= 16 && hour < 20) return "evening";
+    return "night";
+  };
+
+  const timeOfDay = getTimeOfDay();
+
+  return (
+    <ImageBackground source={bgImages[timeOfDay]} style={styles.container}>
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar
+          barStyle={timeOfDay === "night" ? "light-content" : "dark-content"}
+          backgroundColor="transparent"
+          translucent={true}
+        />
+        <View style={styles.headerContainer}>
+          <Text
+            style={[
+              styles.headerTitle,
+              { color: timeOfDay === "night" ? "#fff" : theme.textColor },
+            ]}
+          >
+            My Notes
+          </Text>
+        </View>
+        <View style={styles.searchBarContainer}>
+          <TextInput
+            placeholder="Search notes..."
+            placeholderTextColor={theme.mutedTextColor}
+            style={[
+              styles.searchBar,
+              {
+                backgroundColor: "rgba(255, 255, 255, 0.6)",
+                borderColor: theme.borderColor,
+                color: theme.textColor,
+              },
+            ]}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+          <Pressable
+            style={[styles.addButton, { backgroundColor: theme.buttonColor }]}
+          >
+            <Text
+              style={[styles.addButtonText, { color: theme.buttonTextColor }]}
+            >
+              + Add
+            </Text>
+          </Pressable>
+        </View>
+
+        <FlatList
+          data={filteredNotes}
+          renderItem={({ item }) => (
+            <CardDisplay title={item.title} description={item.description} />
+          )}
+          keyExtractor={(item) => item.id.toString()}
+          style={styles.notesList}
+          contentContainerStyle={styles.notesListContent}
+        />
+      </SafeAreaView>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  safeArea: {
     flex: 1,
   },
   headerContainer: {

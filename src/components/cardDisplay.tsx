@@ -12,7 +12,10 @@ const CardDisplay = ({ title, description }: CardDisplayProps) => {
     <View
       style={[
         styles.container,
-        { backgroundColor: theme.cardColor, borderColor: theme.borderColor },
+        {
+          backgroundColor: "rgba(255, 255, 255, 0.6)",
+          borderColor: theme.borderColor,
+        },
       ]}
     >
       <Text style={[styles.title, { color: theme.textColor }]}>{title}</Text>

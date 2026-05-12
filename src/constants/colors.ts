@@ -1,19 +1,19 @@
 export const lightTheme = {
-  backgroundColor: "#f8f9fa",
-  textColor: "#212529",
-  cardColor: "#ffffff",
-  buttonColor: "#4361ee",
-  buttonTextColor: "#ffffff",
-  borderColor: "#e9ecef",
-  mutedTextColor: "#6c757d",
+  backgroundColor: "#F0F2F5",
+  textColor: "#1A1A1A",
+  cardColor: "rgba(255, 255, 255, 0.8)",
+  buttonColor: "#6366F1",
+  buttonTextColor: "#FFFFFF",
+  borderColor: "rgba(0, 0, 0, 0.05)",
+  mutedTextColor: "#64748B",
 };
 
 export const darkTheme = {
-  backgroundColor: "#121212",
-  textColor: "#f8f9fa",
-  cardColor: "#1e1e1e",
-  buttonColor: "#4361ee",
-  buttonTextColor: "#ffffff",
-  borderColor: "#343a40",
-  mutedTextColor: "#adb5bd",
+  backgroundColor: "#0F172A",
+  textColor: "#F8FAFC",
+  cardColor: "rgba(30, 41, 59, 0.7)",
+  buttonColor: "#818CF8",
+  buttonTextColor: "#FFFFFF",
+  borderColor: "rgba(255, 255, 255, 0.1)",
+  mutedTextColor: "#94A3B8",
 };
