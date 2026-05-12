@@ -1,6 +1,7 @@
 import CardAddOrEdit from "@/components/cardAddOrEdit";
 import CardDisplay from "@/components/cardDisplay";
 import { darkTheme, lightTheme } from "@/constants/colors";
+import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import {
   FlatList,
@@ -29,41 +30,31 @@ const bgImages: { [key: string]: any } = {
   night: require("@/assets/images/night.jpg"),
 };
 
+function getTimeOfDay() {
+  const hour = new Date().getHours();
+
+  if (hour >= 5 && hour < 11) return "morning";
+  if (hour >= 11 && hour < 16) return "afternoon";
+  if (hour >= 16 && hour < 20) return "evening";
+  return "night";
+}
+
 export default function Index() {
   const colorScheme = useColorScheme();
-  const theme = colorScheme === "dark" ? darkTheme : lightTheme;
+  const [isDarkMode, setIsDarkMode] = useState(colorScheme === "dark");
+  const theme = isDarkMode ? darkTheme : lightTheme;
 
-  const [notes, setNotes] = useState<Note[]>([
-    {
-      title: "Note 1",
-      description: "Description 1",
-      id: 1,
-    },
-    {
-      title: "Note 2",
-      description: "Description 2",
-      id: 2,
-    },
-    {
-      title: "Note 3",
-      description: "Description 3",
-      id: 3,
-    },
-  ]);
+  const [notes, setNotes] = useState<Note[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [timeOfDay, setTimeOfDay] = useState(getTimeOfDay());
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newNoteTitle, setNewNoteTitle] = useState("");
   const [newNoteDescription, setNewNoteDescription] = useState("");
+  const [editingNoteId, setEditingNoteId] = useState<number | null>(null);
 
-  function getTimeOfDay() {
-    const hour = new Date().getHours();
-
-    if (hour >= 5 && hour < 11) return "morning";
-    if (hour >= 11 && hour < 16) return "afternoon";
-    if (hour >= 16 && hour < 20) return "evening";
-    return "night";
-  }
+  useEffect(() => {
+    setIsDarkMode(colorScheme === "dark");
+  }, [colorScheme]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -73,28 +64,56 @@ export default function Index() {
     return () => clearInterval(interval);
   }, []);
 
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
   const addNoteHandler = () => {
+    setEditingNoteId(null);
+    setNewNoteTitle("");
+    setNewNoteDescription("");
+    setIsModalVisible(true);
+  };
+
+  const editNoteHandler = (note: Note) => {
+    setEditingNoteId(note.id);
+    setNewNoteTitle(note.title);
+    setNewNoteDescription(note.description);
     setIsModalVisible(true);
   };
 
   const saveNote = () => {
     if (newNoteTitle.trim() === "" || newNoteDescription.trim() === "") return;
 
-    const newNote: Note = {
-      id: Date.now(),
-      title: newNoteTitle,
-      description: newNoteDescription,
-    };
+    if (editingNoteId !== null) {
+      // Update existing note
+      setNotes((prevNotes) =>
+        prevNotes.map((note) =>
+          note.id === editingNoteId
+            ? { ...note, title: newNoteTitle, description: newNoteDescription }
+            : note,
+        ),
+      );
+    } else {
+      // Create new note
+      const newNote: Note = {
+        id: Date.now(),
+        title: newNoteTitle,
+        description: newNoteDescription,
+      };
+      setNotes((prevNotes) => [newNote, ...prevNotes]);
+    }
 
-    setNotes((prevNotes) => [newNote, ...prevNotes]);
     setNewNoteTitle("");
     setNewNoteDescription("");
+    setEditingNoteId(null);
     setIsModalVisible(false);
   };
 
   const cancelAddNote = () => {
     setNewNoteTitle("");
     setNewNoteDescription("");
+    setEditingNoteId(null);
     setIsModalVisible(false);
   };
 
@@ -125,7 +144,7 @@ export default function Index() {
               ]}
             >
               <Text style={[styles.modalTitle, { color: theme.textColor }]}>
-                Add New Note
+                {editingNoteId !== null ? "Edit Note" : "Add New Note"}
               </Text>
               <CardAddOrEdit
                 title={newNoteTitle}
@@ -134,6 +153,7 @@ export default function Index() {
                 descriptionChangeHandler={setNewNoteDescription}
                 saveHandler={saveNote}
                 cancelHandler={cancelAddNote}
+                theme={theme}
               />
             </View>
           </View>
@@ -145,7 +165,7 @@ export default function Index() {
               styles.headerTitle,
               {
                 color:
-                  timeOfDay === "night" || colorScheme === "dark"
+                  timeOfDay === "night" || isDarkMode
                     ? "#fff"
                     : theme.textColor,
               },
@@ -153,6 +173,28 @@ export default function Index() {
           >
             My Notes
           </Text>
+          <Pressable
+            onPress={toggleTheme}
+            style={[
+              styles.themeToggle,
+              {
+                backgroundColor: isDarkMode
+                  ? "rgba(30, 41, 59, 0.5)"
+                  : "rgba(255, 255, 255, 0.4)",
+                borderColor: isDarkMode
+                  ? "rgba(255, 255, 255, 0.1)"
+                  : "rgba(0, 0, 0, 0.05)",
+              },
+            ]}
+          >
+            <Ionicons
+              name={isDarkMode ? "sunny" : "moon"}
+              size={24}
+              color={
+                timeOfDay === "night" || isDarkMode ? "#fff" : theme.textColor
+              }
+            />
+          </Pressable>
         </View>
         <View style={styles.searchBarContainer}>
           <TextInput
@@ -184,7 +226,13 @@ export default function Index() {
         <FlatList
           data={filteredNotes}
           renderItem={({ item }) => (
-            <CardDisplay title={item.title} description={item.description} />
+            <Pressable onPress={() => editNoteHandler(item)}>
+              <CardDisplay
+                title={item.title}
+                description={item.description}
+                theme={theme}
+              />
+            </Pressable>
           )}
           keyExtractor={(item) => item.id.toString()}
           style={styles.notesList}
@@ -208,6 +256,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  themeToggle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
 
   headerTitle: {
@@ -267,12 +331,14 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     gap: 16,
   },
+  
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
   },
+
   modalContent: {
     width: "85%",
     backgroundColor: "rgba(255, 255, 255, 0.9)",
@@ -284,6 +350,7 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 10,
   },
+
   modalTitle: {
     fontSize: 22,
     fontWeight: "bold",

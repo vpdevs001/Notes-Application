@@ -5,11 +5,10 @@ import { StyleSheet, Text, View, useColorScheme } from "react-native";
 interface CardDisplayProps {
   title: string;
   description: string;
+  theme: any;
 }
 
-const CardDisplay = ({ title, description }: CardDisplayProps) => {
-  const colorScheme = useColorScheme();
-  const theme = colorScheme === "dark" ? darkTheme : lightTheme;
+const CardDisplay = ({ title, description, theme }: CardDisplayProps) => {
   return (
     <View
       style={[

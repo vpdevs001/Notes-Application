@@ -9,6 +9,7 @@ interface cardAddOrEditProps {
   descriptionChangeHandler: (value: string) => void;
   saveHandler: () => void;
   cancelHandler: () => void;
+  theme: any;
 }
 
 const CardAddOrEdit = ({
@@ -18,9 +19,8 @@ const CardAddOrEdit = ({
   descriptionChangeHandler,
   saveHandler,
   cancelHandler,
+  theme,
 }: cardAddOrEditProps) => {
-  const colorScheme = useColorScheme();
-  const theme = colorScheme === "dark" ? darkTheme : lightTheme;
   return (
     <View style={styles.container}>
       <TextInput
@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
   container: {
     gap: 20,
   },
+  
   titleInput: {
     fontSize: 18,
     fontWeight: "700",
@@ -77,6 +78,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
   },
+
   descriptionInput: {
     fontSize: 16,
     minHeight: 120,
@@ -87,11 +89,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
   },
+
   buttonContainer: {
     flexDirection: "row",
     gap: 12,
     marginTop: 10,
   },
+
   button: {
     flex: 1,
     height: 50,
@@ -99,6 +103,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+
   saveButton: {
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
@@ -106,16 +111,19 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 4,
   },
+
   saveButtonText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "700",
   },
+
   cancelButton: {
     backgroundColor: "transparent",
     borderWidth: 1,
     borderColor: "#e2e8f0",
   },
+
   cancelButtonText: {
     color: "#64748B",
     fontSize: 16,
