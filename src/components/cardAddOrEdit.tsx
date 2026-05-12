@@ -70,6 +70,7 @@ const styles = StyleSheet.create({
   titleInput: {
     fontSize: 18,
     fontWeight: "700",
+    fontFamily: "Poppins_700Bold",
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 12,
@@ -80,6 +81,7 @@ const styles = StyleSheet.create({
 
   descriptionInput: {
     fontSize: 16,
+    fontFamily: "Poppins_400Regular",
     minHeight: 120,
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -115,6 +117,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "700",
+    fontFamily: "Poppins_700Bold",
   },
 
   cancelButton: {
@@ -127,5 +130,6 @@ const styles = StyleSheet.create({
     color: "#64748B",
     fontSize: 16,
     fontWeight: "600",
+    fontFamily: "Poppins_600SemiBold",
   },
 });

@@ -277,6 +277,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 32,
     fontWeight: "bold",
+    fontFamily: "Poppins_700Bold",
   },
 
   searchBarContainer: {
@@ -295,6 +296,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: 16,
+    fontFamily: "Poppins_400Regular",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -318,6 +320,7 @@ const styles = StyleSheet.create({
   addButtonText: {
     fontSize: 16,
     fontWeight: "600",
+    fontFamily: "Poppins_600SemiBold",
   },
 
   notesList: {
@@ -354,6 +357,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 22,
     fontWeight: "bold",
+    fontFamily: "Poppins_700Bold",
     marginBottom: 15,
     textAlign: "center",
     color: "#333",

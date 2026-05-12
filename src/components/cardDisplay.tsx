@@ -43,11 +43,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "700",
+    fontFamily: "Poppins_700Bold",
     marginBottom: 8,
   },
 
   description: {
     fontSize: 15,
+    fontFamily: "Poppins_400Regular",
     lineHeight: 22,
   },
 });
