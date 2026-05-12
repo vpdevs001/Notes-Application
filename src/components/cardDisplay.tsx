@@ -39,11 +39,13 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 3,
   },
+  
   title: {
     fontSize: 18,
     fontWeight: "700",
     marginBottom: 8,
   },
+
   description: {
     fontSize: 15,
     lineHeight: 22,

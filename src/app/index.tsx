@@ -1,9 +1,11 @@
+import CardAddOrEdit from "@/components/cardAddOrEdit";
 import CardDisplay from "@/components/cardDisplay";
 import { lightTheme as theme } from "@/constants/colors";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FlatList,
   ImageBackground,
+  Modal,
   Pressable,
   StatusBar,
   StyleSheet,
@@ -45,21 +47,56 @@ export default function Index() {
     },
   ]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [timeOfDay, setTimeOfDay] = useState(getTimeOfDay());
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [newNoteTitle, setNewNoteTitle] = useState("");
+  const [newNoteDescription, setNewNoteDescription] = useState("");
 
-  const filteredNotes = notes.filter((note) =>
-    note.title.includes(searchQuery),
-  );
-
-  const getTimeOfDay = () => {
+  function getTimeOfDay() {
     const hour = new Date().getHours();
 
     if (hour >= 5 && hour < 11) return "morning";
     if (hour >= 11 && hour < 16) return "afternoon";
     if (hour >= 16 && hour < 20) return "evening";
     return "night";
+  }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimeOfDay(getTimeOfDay());
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const addNoteHandler = () => {
+    setIsModalVisible(true);
   };
 
-  const timeOfDay = getTimeOfDay();
+  const saveNote = () => {
+    if (newNoteTitle.trim() === "" || newNoteDescription.trim() === "") return;
+
+    const newNote: Note = {
+      id: Date.now(),
+      title: newNoteTitle,
+      description: newNoteDescription,
+    };
+
+    setNotes((prevNotes) => [newNote, ...prevNotes]);
+    setNewNoteTitle("");
+    setNewNoteDescription("");
+    setIsModalVisible(false);
+  };
+
+  const cancelAddNote = () => {
+    setNewNoteTitle("");
+    setNewNoteDescription("");
+    setIsModalVisible(false);
+  };
+
+  const filteredNotes = notes.filter((note) =>
+    note.title.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   return (
     <ImageBackground source={bgImages[timeOfDay]} style={styles.container}>
@@ -69,6 +106,28 @@ export default function Index() {
           backgroundColor="transparent"
           translucent={true}
         />
+
+        <Modal
+          visible={isModalVisible}
+          animationType="fade"
+          transparent={true}
+          onRequestClose={cancelAddNote}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Add New Note</Text>
+              <CardAddOrEdit
+                title={newNoteTitle}
+                titleChangeHandler={setNewNoteTitle}
+                description={newNoteDescription}
+                descriptionChangeHandler={setNewNoteDescription}
+                saveHandler={saveNote}
+                cancelHandler={cancelAddNote}
+              />
+            </View>
+          </View>
+        </Modal>
+
         <View style={styles.headerContainer}>
           <Text
             style={[
@@ -96,6 +155,7 @@ export default function Index() {
           />
           <Pressable
             style={[styles.addButton, { backgroundColor: theme.buttonColor }]}
+            onPress={addNoteHandler}
           >
             <Text
               style={[styles.addButtonText, { color: theme.buttonTextColor }]}
@@ -123,18 +183,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+
   safeArea: {
     flex: 1,
   },
+
   headerContainer: {
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 10,
   },
+
   headerTitle: {
     fontSize: 32,
     fontWeight: "bold",
   },
+
   searchBarContainer: {
     display: "flex",
     flexDirection: "row",
@@ -143,6 +207,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: "center",
   },
+
   searchBar: {
     flex: 1,
     borderWidth: 1,
@@ -156,6 +221,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 2,
   },
+
   addButton: {
     paddingHorizontal: 20,
     paddingVertical: 14,
@@ -168,18 +234,45 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
+
   addButtonText: {
     fontSize: 16,
     fontWeight: "600",
   },
+
   notesList: {
     flex: 1,
     width: "100%",
   },
+
   notesListContent: {
     paddingHorizontal: 20,
     paddingBottom: 20,
     paddingTop: 10,
     gap: 16,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    width: "85%",
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.25,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginBottom: 15,
+    textAlign: "center",
+    color: "#333",
   },
 });
