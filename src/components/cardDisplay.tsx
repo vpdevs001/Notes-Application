@@ -1,6 +1,6 @@
-import { lightTheme as theme } from "@/constants/colors";
+import { darkTheme, lightTheme } from "@/constants/colors";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, useColorScheme } from "react-native";
 
 interface CardDisplayProps {
   title: string;
@@ -8,12 +8,14 @@ interface CardDisplayProps {
 }
 
 const CardDisplay = ({ title, description }: CardDisplayProps) => {
+  const colorScheme = useColorScheme();
+  const theme = colorScheme === "dark" ? darkTheme : lightTheme;
   return (
     <View
       style={[
         styles.container,
         {
-          backgroundColor: "rgba(255, 255, 255, 0.6)",
+          backgroundColor: theme.cardColor,
           borderColor: theme.borderColor,
         },
       ]}

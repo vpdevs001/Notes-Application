@@ -1,6 +1,6 @@
-import { lightTheme as theme } from "@/constants/colors";
+import { darkTheme, lightTheme } from "@/constants/colors";
 import React from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View, useColorScheme } from "react-native";
 
 interface cardAddOrEditProps {
   title: string;
@@ -19,17 +19,19 @@ const CardAddOrEdit = ({
   saveHandler,
   cancelHandler,
 }: cardAddOrEditProps) => {
+  const colorScheme = useColorScheme();
+  const theme = colorScheme === "dark" ? darkTheme : lightTheme;
   return (
     <View style={styles.container}>
       <TextInput
-        style={styles.titleInput}
+        style={[styles.titleInput, { color: theme.textColor }]}
         value={title}
         onChangeText={titleChangeHandler}
         placeholder="Note Title"
         placeholderTextColor={theme.mutedTextColor}
       />
       <TextInput
-        style={styles.descriptionInput}
+        style={[styles.descriptionInput, { color: theme.textColor }]}
         value={description}
         onChangeText={descriptionChangeHandler}
         placeholder="Start typing your note..."
@@ -71,10 +73,9 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 12,
-    backgroundColor: "rgba(0,0,0,0.03)",
+    backgroundColor: "rgba(0,0,0,0.05)",
     borderWidth: 1,
-    borderColor: "rgba(0,0,0,0.05)",
-    color: "#333",
+    borderColor: "rgba(255,255,255,0.1)",
   },
   descriptionInput: {
     fontSize: 16,
@@ -82,10 +83,9 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 12,
-    backgroundColor: "rgba(0,0,0,0.03)",
+    backgroundColor: "rgba(0,0,0,0.05)",
     borderWidth: 1,
-    borderColor: "rgba(0,0,0,0.05)",
-    color: "#444",
+    borderColor: "rgba(255,255,255,0.1)",
   },
   buttonContainer: {
     flexDirection: "row",

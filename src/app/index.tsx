@@ -1,6 +1,6 @@
 import CardAddOrEdit from "@/components/cardAddOrEdit";
 import CardDisplay from "@/components/cardDisplay";
-import { lightTheme as theme } from "@/constants/colors";
+import { darkTheme, lightTheme } from "@/constants/colors";
 import { useEffect, useState } from "react";
 import {
   FlatList,
@@ -12,6 +12,7 @@ import {
   Text,
   TextInput,
   View,
+  useColorScheme,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -29,6 +30,9 @@ const bgImages: { [key: string]: any } = {
 };
 
 export default function Index() {
+  const colorScheme = useColorScheme();
+  const theme = colorScheme === "dark" ? darkTheme : lightTheme;
+
   const [notes, setNotes] = useState<Note[]>([
     {
       title: "Note 1",
@@ -102,7 +106,7 @@ export default function Index() {
     <ImageBackground source={bgImages[timeOfDay]} style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <StatusBar
-          barStyle={timeOfDay === "night" ? "light-content" : "dark-content"}
+          barStyle={colorScheme === "dark" ? "light-content" : "dark-content"}
           backgroundColor="transparent"
           translucent={true}
         />
@@ -114,8 +118,15 @@ export default function Index() {
           onRequestClose={cancelAddNote}
         >
           <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Add New Note</Text>
+            <View
+              style={[
+                styles.modalContent,
+                { backgroundColor: theme.backgroundColor },
+              ]}
+            >
+              <Text style={[styles.modalTitle, { color: theme.textColor }]}>
+                Add New Note
+              </Text>
               <CardAddOrEdit
                 title={newNoteTitle}
                 titleChangeHandler={setNewNoteTitle}
@@ -132,7 +143,12 @@ export default function Index() {
           <Text
             style={[
               styles.headerTitle,
-              { color: timeOfDay === "night" ? "#fff" : theme.textColor },
+              {
+                color:
+                  timeOfDay === "night" || colorScheme === "dark"
+                    ? "#fff"
+                    : theme.textColor,
+              },
             ]}
           >
             My Notes
@@ -145,7 +161,7 @@ export default function Index() {
             style={[
               styles.searchBar,
               {
-                backgroundColor: "rgba(255, 255, 255, 0.6)",
+                backgroundColor: theme.cardColor,
                 borderColor: theme.borderColor,
                 color: theme.textColor,
               },
